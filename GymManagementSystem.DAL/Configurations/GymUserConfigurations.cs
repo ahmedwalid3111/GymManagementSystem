@@ -1,0 +1,32 @@
+﻿using GymManagementSystem.DAL.Models;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace GymManagementSystem.DAL.Configurations
+{
+    public class GymUserConfigurations<T>:IEntityTypeConfiguration<T> where T : GymUser
+    {
+        public void Configure(Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder<T> builder)
+        {
+            builder.Property(U => U.Name).HasColumnType("varchar").HasMaxLength(50);
+            builder.Property(U => U.Email).HasColumnType("varchar").HasMaxLength(100);
+            builder.Property(U => U.Phone).HasColumnType("varchar").HasMaxLength(11);
+            builder.HasIndex(U => U.Email).IsUnique();
+            builder.HasIndex(U => U.Phone).IsUnique();
+            builder.ToTable(TB =>
+            {
+                TB.HasCheckConstraint("EmailCheck", "Email like '_%@_%._%'");
+                TB.HasCheckConstraint("PhoneCheck", "Phone like '01[0125][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]'");
+            });
+            builder.OwnsOne(U => U.Address, address =>
+            {
+                address.Property(A => A.Street).HasColumnType("varchar").HasMaxLength(30);
+                address.Property(A => A.City).HasColumnType("varchar").HasMaxLength(30);
+            });
+
+        }
+        }
+    }
+
