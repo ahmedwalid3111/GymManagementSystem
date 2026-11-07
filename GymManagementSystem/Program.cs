@@ -13,6 +13,8 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<GymDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped<IMemberService, MemberService>();
+builder.Services.AddScoped<IPlanService, PlanService>();
+builder.Services.AddScoped<ITrainerService, TrainerService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

@@ -11,7 +11,12 @@ namespace GymManagementSystem.BLL.ViewModels.MemberViewModels
         public string Name { get; set; }= default!;
         public string Email { get; set; } = default!;
         public string Phone { get; set; } = default!;
-        public string Photo { get; set; } = default!;
+        public string? Photo { get; set; } = default!;
         public Gender Gender { get; set; }
+        public string Address { get; set; }
+        public string PlanName { get; set; }
+        public string MembershipStartDate { get; set; }
+        public string MembershipEndDate { get; set; }
+        public string DateOfBirth { get; set; }
     }
 }

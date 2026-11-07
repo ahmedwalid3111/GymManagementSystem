@@ -50,5 +50,11 @@ namespace GymManagementSystem.DAL.Repositories.Classes
 
             return await _dbSet.AnyAsync(predicate, ct);
         }
+
+        public async Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate, bool tracking = false, CancellationToken ct = default)
+        {
+            var result = tracking ? _dbSet.FirstOrDefaultAsync(predicate, ct) : _dbSet.AsNoTracking().FirstOrDefaultAsync(predicate, ct);
+            return await result;
+        }
     }
 }

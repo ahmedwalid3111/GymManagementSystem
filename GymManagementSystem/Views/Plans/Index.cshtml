@@ -1,5 +1,5 @@
-﻿@using GymManagementSystem.DAL.Data.Models
-@model IEnumerable<Plan>
+﻿
+@model IEnumerable<PlanViewModel>
 
         <div class="container">
             <main role="main" class="pb-3">
@@ -51,7 +51,10 @@
                                                         <a href="\Plans\Edit\@plan.Id" class="btn btn-outline btn-sm flex-fill">
                                                             <i class="bi bi-pencil me-1"></i>Edit
                                                         </a>
-                                                        <form href="\Plans\Activate\@plan.Id" method="post" class="flex-fill">
+                                                <form asp-controller="Plans"
+                                                      asp-action="Activate"
+                                                      asp-route-id="@plan.Id"
+                                                      method="post" class="flex-fill">
                                                             @* If Plan is Active put class  if not  *@
                                                             <button type="submit" class="btn btn-outline btn-sm w-100 @(plan.IsActive ? "text-danger" : "text-success")">
                                                                 @if (plan.IsActive)
