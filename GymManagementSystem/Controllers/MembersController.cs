@@ -4,10 +4,12 @@ using GymManagementSystem.BLL.ViewModels;
 using GymManagementSystem.BLL.ViewModels.MemberViewModels;
 using GymManagementSystem.DAL.Data.Models;
 using GymManagementSystem.DAL.Repositories.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GymManagementSystem.PL.Controllers
 {
+    [Authorize(Roles ="SuperAdmin")]
     public class MembersController : Controller
     {
         private readonly IMemberService _memberService;
