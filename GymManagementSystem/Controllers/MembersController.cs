@@ -1,4 +1,5 @@
-﻿using GymManagementSystem.BLL.Services.Interfaces;
+﻿using GymManagementSystem.BLL.Services.AttachmentService;
+using GymManagementSystem.BLL.Services.Interfaces;
 using GymManagementSystem.BLL.ViewModels;
 using GymManagementSystem.BLL.ViewModels.MemberViewModels;
 using GymManagementSystem.DAL.Data.Models;
@@ -10,10 +11,11 @@ namespace GymManagementSystem.PL.Controllers
     public class MembersController : Controller
     {
         private readonly IMemberService _memberService;
-
-        public MembersController(IMemberService memberService)
+        private readonly IAttachmentService _attachmentService;
+        public MembersController(IMemberService memberService, IAttachmentService attachmentService)
         {
             _memberService = memberService;
+            _attachmentService = attachmentService;
         }
         public async Task<IActionResult> Index(CancellationToken ct)
         {
@@ -125,5 +127,16 @@ namespace GymManagementSystem.PL.Controllers
             return RedirectToAction(nameof(Index));
         }
         #endregion
+
+        public async Task<IActionResult> Picture(int id)
+        {
+            var member = await _memberService.GetMemberDetailsAsync(id);
+            if (member is null || string.IsNullOrEmpty(member.Photo))
+                return NotFound();
+            var result = _attachmentService.GetFile(member.Photo, "MembersPictures");
+            if (result is null)
+                return NotFound();
+            return File(result.Value.Stream, result.Value.ContentType);
+        }
     }
 }

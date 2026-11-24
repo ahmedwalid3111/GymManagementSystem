@@ -1,9 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using GymManagementSystem.DAL.Data.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 namespace GymManagementSystem.DAL.Data.DbContexts
 {
-    public class GymDbContext : DbContext
+    public class GymDbContext : IdentityDbContext<ApplicationUser>
     {
         public GymDbContext(DbContextOptions<GymDbContext> options) : base(options)
         {
@@ -13,8 +15,15 @@ namespace GymManagementSystem.DAL.Data.DbContexts
         
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
             //modelBuilder.ApplyConfiguration(new PlanConfigurations());
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+
+            modelBuilder.Entity<ApplicationUser>(ETB =>
+            {
+                ETB.Property(U => U.FirstName).HasColumnType("varchar").HasMaxLength(50);
+                ETB.Property(U => U.LastName).HasColumnType("varchar").HasMaxLength(50);
+            });
         }
         public DbSet<Plan> Plans { get; set; }
         public DbSet<Category> Categories { get; set; }
@@ -24,5 +33,6 @@ namespace GymManagementSystem.DAL.Data.DbContexts
         public DbSet<Booking> Bookings { get; set; }
         public DbSet<HealthRecord> HealthRecords { get; set; }
         public DbSet<Membership> Memberships { get; set; }
+    
     }
 }

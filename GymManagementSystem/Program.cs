@@ -1,9 +1,14 @@
 using GymManagementSystem.BLL.Helpers;
+using GymManagementSystem.BLL.Services.AttachmentService;
 using GymManagementSystem.BLL.Services.Classes;
 using GymManagementSystem.BLL.Services.Interfaces;
+using GymManagementSystem.DAL.Data.DataSeed;
 using GymManagementSystem.DAL.Data.DbContexts;
+using GymManagementSystem.DAL.Data.Models;
 using GymManagementSystem.DAL.Repositories.Classes;
 using GymManagementSystem.DAL.Repositories.Interfaces;
+using GymManagementSystem.PL;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,8 +24,22 @@ builder.Services.AddScoped<IMemberService, MemberService>();
 builder.Services.AddScoped<IPlanService, PlanService>();
 builder.Services.AddScoped<ITrainerService, TrainerService>();
 builder.Services.AddScoped<ISessionService, SessionService>();
+builder.Services.AddScoped<IAttachmentService, AttachmentService>();
 builder.Services.AddAutoMapper(M=>M.AddProfile(new MappingProfile()));
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(config =>
+{
+    config.User.RequireUniqueEmail = true;
+    config.Lockout.MaxFailedAccessAttempts = 5;
+    config.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+
+}).AddEntityFrameworkStores<GymDbContext>();
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/Account/Login";
+    options.AccessDeniedPath = "/Account/AccessDenied";
+});
 var app = builder.Build();
+await app.MigrateAndSeedAsync();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

@@ -1,0 +1,30 @@
+[
+  {
+    "Name": "Basic Plan",
+    "Description": "Access to gym equipment during staffed hours",
+    "DurationDays": 30,
+    "Price": 300.0,
+    "IsActive": true
+  },
+  {
+    "Name": "Standard Plan",
+    "Description": "Includes gym equipment and 2 group classes per week",
+    "DurationDays": 60,
+    "Price": 500.0,
+    "IsActive": true
+  },
+  {
+    "Name": "Premium Plan",
+    "Description": "Enjoy full access to gym equipment and unlimited group classes throughout your 90-day membership",
+    "DurationDays": 90,
+    "Price": 900.0,
+    "IsActive": true
+  },
+  {
+    "Name": "Annual Plan",
+    "Description": "Enjoy 12 months of gym access with unlimited use of gym equipment and group classes",
+    "DurationDays": 365,
+    "Price": 3000.0,
+    "IsActive": true
+  }
+]

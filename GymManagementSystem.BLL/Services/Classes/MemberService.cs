@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using GymManagementSystem.BLL.Services.AttachmentService;
 using GymManagementSystem.BLL.Services.Interfaces;
 using GymManagementSystem.BLL.ViewModels;
 using GymManagementSystem.BLL.ViewModels.MemberViewModels;
@@ -15,11 +16,13 @@ namespace GymManagementSystem.BLL.Services.Classes
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly IAttachmentService _attachmentService;
 
-        public MemberService(IUnitOfWork unitOfWork,IMapper mapper)
+        public MemberService(IUnitOfWork unitOfWork,IMapper mapper, IAttachmentService attachmentService )
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _attachmentService = attachmentService;
         }
 
         public async Task<bool> CreateMemberAsync(CreateMemberViewModel model, CancellationToken ct = default)
@@ -31,12 +34,21 @@ namespace GymManagementSystem.BLL.Services.Classes
             {
                 return false;
             }
+            var photo = await _attachmentService.UploadAsync(model.PhotoFile.OpenReadStream(), model.PhotoFile.FileName, "MembersPictures",ct);
+            if (string.IsNullOrEmpty(photo))
+                return false;
             var member = _mapper.Map<CreateMemberViewModel, Member>(model);
+            member.Photo = photo;
 
             
         repo.AddAsync(member);
             var result = await _unitOfWork.SaveChangesAsync(ct);
-            return result > 0;
+            if (result == 0) 
+            {
+                _attachmentService.Delete(member.Photo,"MembersPictures");
+                return false;
+            }
+            return true;
         }
 
             
@@ -96,7 +108,13 @@ namespace GymManagementSystem.BLL.Services.Classes
                 return false;
             _unitOfWork.GetRepository<Member>().DeleteAsync(member);
             var result = await _unitOfWork.SaveChangesAsync(ct);
-            return result>0;    
+            if (result > 0)
+            {
+                if (!string.IsNullOrEmpty(member.Photo))
+                    _attachmentService.Delete(member.Photo, "MembersPictures");
+                return true;
+            }
+            return false;
         }
 
         public async Task<bool> UpdateMemberAsync(int memberId, MemberToUpdateViewModel model, CancellationToken ct = default)
